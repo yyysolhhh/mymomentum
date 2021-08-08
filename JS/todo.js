@@ -3,8 +3,10 @@ const toDoInput = toDoForm.querySelector("input");
 const toDoList = document.querySelector("#todo-list");
 
 const TODOS_KEY = "todos";
+const CHECKED_KEY = "checked"
 
 let toDos = [];
+let toDosCheck = [];
 
 const life = [
   "Eating icecream", "Reading a book", "Cleaning my room", "Running", "Watching a movie"
@@ -17,17 +19,19 @@ function handleToDoSubmit(e) {
   const newTodoObj = {
     text: newTodo,
     id: Date.now(),
-    checked: true,
   };
   toDos.push(newTodoObj);
   paintToDo(newTodoObj);
   saveToDos();
   setRandomTodo();
-  onload(newTodoObj);
 }
 
 function saveToDos() {
   localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
+}
+
+function saveToDosCheck() {
+  localStorage.setItem(CHECKED_KEY, JSON.stringify(toDosCheck));
 }
 
 function deleteToDo(e) {
@@ -42,26 +46,19 @@ function checkToDo(e) {
   if (li.childNodes[0].checked === true) {
     li.classList.add("line");
     toDoList.appendChild(li);
+    const newTodoCheckObj = {
+      id: li.id,
+      checked: li.childNodes[0].checked
+    };
+    toDosCheck.push(newTodoCheckObj);
+    saveToDosCheck();
   }
   else {
     li.classList.remove("line");
     toDoList.prepend(li);
   }
+  
 }
-
-// window.onload = function(list){
-//   let list = toDos;
-//   list.forEach(el => {
-//       let checked = JSON.parse(localStorage.getItem(el.id));
-//       document.getElementById(el.id).checked = checked;
-//       console.log(el.id,el.checked);
-//   });
-//   list.forEach(el => {
-//     localStorage.setItem(el.id, el.checked);
-//     console.log(el.id,el.checked);
-//     })
-// }
-
 
 function paintToDo(newTodo) {
   const li = document.createElement("li");
@@ -79,7 +76,7 @@ function paintToDo(newTodo) {
   li.appendChild(checkbox);
   li.appendChild(span);
   li.appendChild(button);
-  toDoList.appendChild(li);
+  toDoList.prepend(li);
 }
 
 function setRandomTodo() {
@@ -90,13 +87,45 @@ function setRandomTodo() {
 toDoForm.addEventListener("submit", handleToDoSubmit);
 
 const savedToDos = localStorage.getItem(TODOS_KEY);
-// const savedCheck = localStorage.getItem(checkbox);
 
 if (savedToDos !== null) {
   const parsedToDos = JSON.parse(savedToDos);
   toDos = parsedToDos;
   parsedToDos.forEach(paintToDo);
 }
+
+const savedCheck = localStorage.getItem(CHECKED_KEY);
+
+if (savedCheck !== null) {
+  const parsedCheck = JSON.parse(savedCheck);
+  toDosCheck = parsedCheck;
+  parsedCheck.forEach(checkToDo);
+}
+
+// window.onload = function() {
+//   console.log(toDosCheck);
+//   toDosCheck.forEach(el => {
+//     const check = JSON.parse(localStorage.getItem(el.checked));
+//     console.log(el.checked, el.id);
+//     if (check === true) {
+//       el.childNodes[0].checked = true;
+//     }
+//   })
+// }
+
+// window.onload = function(list){
+//   let list = toDos;
+//   list.forEach(el => {
+//       let checked = JSON.parse(localStorage.getItem(el.id));
+//       document.getElementById(el.id).checked = checked;
+//       console.log(el.id,el.checked);
+//   });
+//   list.forEach(el => {
+//     localStorage.setItem(el.id, el.checked);
+//     console.log(el.id,el.checked);
+//     })
+// }
+
 
 setRandomTodo();
 
