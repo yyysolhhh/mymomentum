@@ -20,5 +20,5 @@ function getWeather(url) {
       weather.innerText = `${data.weather[0].main} ${data.main.temp}˚`;
     });
 }
-
+console.log("h");
 navigator.geolocation.getCurrentPosition(onGeoOk, onGeoError);
